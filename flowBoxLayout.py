@@ -1,9 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
-import cairo
 
 class FlowBoxWindow(Gtk.Window):
 
@@ -33,6 +32,18 @@ class FlowBoxWindow(Gtk.Window):
         self.add(scrolled)
         self.show_all()
 
+    def on_draw(self, widget, cr, data):
+        context = widget.get_style_context()
+
+        width = widget.get_allocated_width()
+        height = widget.get_allocated_height()
+        Gtk.render_background(context, cr, 0, 0, width, height)
+
+        r,g,b,a = data['color']
+        cr.set_source_rgba(r,g,b,a)
+        cr.rectangle(0, 0, width, height)
+        cr.fill()    
+
     def color_swatch_new(self, str_color):
         color = Gdk.color_parse(str_color)
 
@@ -41,28 +52,11 @@ class FlowBoxWindow(Gtk.Window):
 
         area = Gtk.DrawingArea()
         area.set_size_request(24, 24)
-
-        area.override_background_color(0, rgba)
+        area.connect("draw", self.on_draw, {'color': rgba})
 
         button.add(area)
 
         return button
-
-    def expose(self, widget, event):
-    	cr = widget.window.cairo_create()
-
-        cr.set_line_width(9)
-        cr.set_source_rgb(0.7, 0.2, 0.0)
-                
-        w = self.allocation.width
-        h = self.allocation.height
-
-        cr.translate(w/2, h/2)
-        cr.arc(0, 0, 50, 0, 2*math.pi)
-        cr.stroke_preserve()
-        
-        cr.set_source_rgb(0.3, 0.4, 0.6)
-        cr.fill()
 
     def create_flowbox(self, flowbox):
         colors = [
