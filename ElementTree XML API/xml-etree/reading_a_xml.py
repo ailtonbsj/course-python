@@ -8,16 +8,16 @@ root = tree.getroot()
 # root = ET.fromstring(country_data_as_string)
 
 # get attributes
-print root.tag
-print root.attrib
-print root.text
+print(root.tag)
+print(root.attrib)
+print(root.text)
 
 # get children
 for child in root:
     print(child.tag, child.attrib)
 
 # get children as array
-print root[0][1].text
+print(root[0][1].text)
 
 # iterating elements
 for neighbor in root.iter('neighbor'):
